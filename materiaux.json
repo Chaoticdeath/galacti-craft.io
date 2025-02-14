@@ -1,0 +1,302 @@
+[
+    {
+        "id": 1,
+        "nom": "NASA Workbench",
+        "materiaux": ["Crafting Table", "Compressed Steel", "Levier", "Redstone Torch", "Advanced Wafer"]
+    },
+    {
+        "id": 2,
+        "nom": "Rocket Launch Pad",
+        "materiaux": ["Iron Block", "Compressed Iron"]
+    },
+    {
+        "id": 3,
+        "nom": "Tier 1 Rocket",
+        "materiaux": ["Nose Cone", "Rocket Fins", "Rocket Engine", "Heavy-Duty Plate", "Chest (optional for storage)"]
+    },
+    {
+        "id": 4,
+        "nom": "Oxygen Collector",
+        "materiaux": ["Compressed Steel", "Compressed Aluminum", "Oxygen Vent", "Oxygen Fan", "Oxygen Concentrator"]
+    },
+    {
+        "id": 5,
+        "nom": "Oxygen Compressor",
+        "materiaux": ["Compressed Steel", "Compressed Aluminum", "Oxygen Vent", "Oxygen Concentrator", "Basic Wafer"]
+    },
+    {
+        "id": 6,
+        "nom": "Oxygen Sealer",
+        "materiaux": ["Compressed Steel", "Compressed Aluminum", "Oxygen Vent", "Oxygen Fan", "Basic Wafer"]
+    },
+    {
+        "id": 7,
+        "nom": "Oxygen Bubble Distributor",
+        "materiaux": ["Compressed Steel", "Compressed Aluminum", "Oxygen Vent", "Oxygen Fan", "Basic Wafer"]
+    },
+    {
+        "id": 8,
+        "nom": "Oxygen Gear",
+        "materiaux": ["Oxygen Pipe", "Oxygen Concentrator"]
+    },
+    {
+        "id": 9,
+        "nom": "Oxygen Mask",
+        "materiaux": ["Glass Pane", "Iron Helmet"]
+    },
+    {
+        "id": 10,
+        "nom": "Oxygen Tank (Light, Medium, Heavy)",
+        "materiaux": ["Red Wool", "Tin Canister", "Oxygen Concentrator"]
+    },
+    {
+        "id": 11,
+        "nom": "Aluminum Wire",
+        "materiaux": ["Wool", "Aluminum Ingot"]
+    },
+    {
+        "id": 12,
+        "nom": "Coal Generator",
+        "materiaux": ["Furnace", "Copper Ingot", "Iron Ingot", "Aluminum Wire"]
+    },
+    {
+        "id": 13,
+        "nom": "Basic Solar Panel",
+        "materiaux": ["Compressed Steel", "Compressed Silicon", "Aluminum Wire", "Basic Wafer", "Glass Pane"]
+    },
+    {
+        "id": 14,
+        "nom": "Advanced Solar Panel",
+        "materiaux": ["Compressed Steel", "Compressed Silicon", "Aluminum Wire", "Advanced Wafer", "Glass Pane"]
+    },
+    {
+        "id": 15,
+        "nom": "Circuit Fabricator",
+        "materiaux": ["Furnace", "Button", "Aluminum Ingot", "Lever", "Redstone Torch"]
+    },
+    {
+        "id": 16,
+        "nom": "Compressor",
+        "materiaux": ["Anvil", "Copper Ingot", "Aluminum Ingot", "Basic Wafer"]
+    },
+    {
+        "id": 17,
+        "nom": "Electric Compressor",
+        "materiaux": ["Anvil", "Compressed Steel", "Advanced Wafer", "Aluminum Wire"]
+    },
+    {
+        "id": 18,
+        "nom": "Refinery",
+        "materiaux": ["Furnace", "Copper Canister", "Stone", "Compressed Steel"]
+    },
+    {
+        "id": 19,
+        "nom": "Fuel Loader",
+        "materiaux": ["Compressed Steel", "Copper Ingot", "Tin Canister", "Basic Wafer"]
+    },
+    {
+        "id": 20,
+        "nom": "Buggy",
+        "materiaux": ["Buggy Seat", "Buggy Storage Box", "Wheel", "Heavy-Duty Plate"]
+    },
+    {
+        "id": 21,
+        "nom": "Buggy Seat",
+        "materiaux": ["Leather", "Aluminum Wire"]
+    },
+    {
+        "id": 22,
+        "nom": "Buggy Storage Box",
+        "materiaux": ["Chest", "Aluminum Wire"]
+    },
+    {
+        "id": 23,
+        "nom": "Buggy Wheel",
+        "materiaux": ["Rubber", "Aluminum Wire"]
+    },
+    {
+        "id": 24,
+        "nom": "Parachute",
+        "materiaux": ["Canvas", "String"]
+    },
+    {
+        "id": 25,
+        "nom": "Red Parachute",
+        "materiaux": ["Canvas", "String"]
+    },
+    {
+        "id": 26,
+        "nom": "Blue Parachute",
+        "materiaux": ["Canvas", "String"]
+    },
+    {
+        "id": 27,
+        "nom": "Green Parachute",
+        "materiaux": ["Canvas", "String"]
+    },
+    {
+        "id": 28,
+        "nom": "Canvas",
+        "materiaux": ["String", "Wool"]
+    },
+    {
+        "id": 29,
+        "nom": "Oxygen Pipe",
+        "materiaux": ["Glass"]
+    },
+    {
+        "id": 30,
+        "nom": "Sealable Oxygen Pipe",
+        "materiaux": ["Glass", "Aluminum Wire"]
+    },
+    {
+        "id": 31,
+        "nom": "Oxygen Detector",
+        "materiaux": ["Compressed Steel", "Oxygen Vent"]
+    },
+    {
+        "id": 32,
+        "nom": "Sensor Glasses",
+        "materiaux": ["Glass", "Advanced Wafer"]
+    },
+    {
+        "id": 33,
+        "nom": "Crude Oil",
+        "materiaux": ["Found in Overworld"]
+    },
+    {
+        "id": 34,
+        "nom": "Refined Fuel",
+        "materiaux": ["Refinery Processing Crude Oil"]
+    },
+    {
+        "id": 35,
+        "nom": "Oxygen Canister",
+        "materiaux": ["Oxygen Collector Filling Canister"]
+    },
+    {
+        "id": 36,
+        "nom": "Empty Canister",
+        "materiaux": ["Tin Ingot"]
+    },
+    {
+        "id": 37,
+        "nom": "Battery (Charged)",
+        "materiaux": ["Coal Generator", "Aluminum Wire"]
+    },
+    {
+        "id": 38,
+        "nom": "Battery (Discharged)",
+        "materiaux": ["Battery Used"]
+    },
+    {
+        "id": 39,
+        "nom": "Moon Turf",
+        "materiaux": ["Surface Block Found on the Moon"]
+    },
+    {
+        "id": 40,
+        "nom": "Moon Rock",
+        "materiaux": ["Moon Stone"]
+    },
+    {
+        "id": 41,
+        "nom": "Moon Dungeon Brick",
+        "materiaux": ["Moon Dungeon Structure"]
+    },
+    {
+        "id": 42,
+        "nom": "Air Lock Frame",
+        "materiaux": ["Compressed Steel", "Aluminum Wire"]
+    },
+    {
+        "id": 43,
+        "nom": "Air Lock Controller",
+        "materiaux": ["Compressed Steel", "Basic Wafer", "Redstone Torch"]
+    },
+    {
+        "id": 44,
+        "nom": "Landing Pad",
+        "materiaux": ["Compressed Iron", "Iron Block"]
+    },
+    {
+        "id": 45,
+        "nom": "Space Station Module",
+        "materiaux": ["Compressed Steel", "Aluminum Wire", "Heavy-Duty Plate"]
+    },
+    {
+        "id": 46,
+        "nom": "Cargo Loader",
+        "materiaux": ["Compressed Steel", "Aluminum Wire", "Chest"]
+    },
+    {
+        "id": 47,
+        "nom": "Cargo Unloader",
+        "materiaux": ["Compressed Steel", "Aluminum Wire", "Hopper"]
+    },
+    {
+        "id": 48,
+        "nom": "Oxygen Storage Module",
+        "materiaux": ["Compressed Steel", "Aluminum Wire", "Oxygen Tank"]
+    },
+    {
+        "id": 49,
+        "nom": "Aluminum Ore",
+        "materiaux": ["Natural Ore Found in Overworld"]
+    },
+    {
+        "id": 50,
+        "nom": "Copper Ore",
+        "materiaux": ["Natural Ore Found in Overworld"]
+    },
+    {
+        "id": 51,
+        "nom": "Tin Ore",
+        "materiaux": ["Natural Ore Found in Overworld"]
+    },
+    {
+        "id": 52,
+        "nom": "Silicon Ore",
+        "materiaux": ["Natural Ore Found in Overworld"]
+    },
+    {
+        "id": 53,
+        "nom": "Meteoric Iron Ore",
+        "materiaux": ["Falling Meteors on the Moon"]
+    },
+    {
+        "id": 54,
+        "nom": "Raw Silicon",
+        "materiaux": ["Silicon Ore"]
+    },
+    {
+        "id": 55,
+        "nom": "Compressed Steel",
+        "materiaux": ["Iron Ingot", "Coal"]
+    },
+    {
+        "id": 56,
+        "nom": "Compressed Aluminum",
+        "materiaux": ["Aluminum Ingot"]
+    },
+    {
+        "id": 57,
+        "nom": "Compressed Tin",
+        "materiaux": ["Tin Ingot"]
+    },
+    {
+        "id": 58,
+        "nom": "Compressed Copper",
+        "materiaux": ["Copper Ingot"]
+    },
+    {
+        "id": 59,
+        "nom": "Compressed Meteoric Iron",
+        "materiaux": ["Meteoric Iron"]
+    },
+    {
+        "id": 60,
+        "nom": "Heavy-Duty Plate",
+        "materiaux": ["Compressed Steel", "Compressed Aluminum", "Compressed Bronze"]
+    }
+]
