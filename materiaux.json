@@ -298,8 +298,7 @@
         "id": 60,
         "nom": "Heavy-Duty Plate",
         "materiaux": ["Compressed Steel", "Compressed Aluminum", "Compressed Bronze"]
-    }
-[
+    },
     {
         "id": 61,
         "nom": "Boat",
@@ -499,8 +498,7 @@
         "id": 100,
         "nom": "Fence Gate",
         "materiaux": ["Stick", "Stick", "Wooden Planks", "Stick", "Stick", "Wooden Planks"]
-    }
-[
+    },
     {
         "id": 101,
         "nom": "Iron Bars",
@@ -700,5 +698,140 @@
         "id": 140,
         "nom": "Flower Pot",
         "materiaux": ["Brick", "Brick", "Brick"]
+    },
+    {
+        "id": 141,
+        "nom": "banner",
+        "materiaux": ["wool", "wool", "wool", "wool", "wool", "wool", "stick"]
+    },
+    {
+        "id": 141,
+        "nom": "Copper Block",
+        "materiaux": ["Copper Ingot", "Copper Ingot", "Copper Ingot", "Copper Ingot", "Copper Ingot", "Copper Ingot", "Copper Ingot", "Copper Ingot", "Copper Ingot"]
+    },
+    {
+        "id": 142,
+        "nom": "Cut Copper",
+        "materiaux": ["Copper Block", "Copper Block", "Copper Block", "Copper Block"]
+    },
+    {
+        "id": 143,
+        "nom": "Cut Copper Stairs",
+        "materiaux": ["Cut Copper", "Cut Copper", "Cut Copper", "Cut Copper", "Cut Copper", "Cut Copper"]
+    },
+    {
+        "id": 144,
+        "nom": "Cut Copper Slab",
+        "materiaux": ["Cut Copper", "Cut Copper", "Cut Copper"]
+    },
+    {
+        "id": 145,
+        "nom": "Lightning Rod",
+        "materiaux": ["Copper Ingot", "Copper Ingot", "Copper Ingot"]
+    },
+    {
+        "id": 146,
+        "nom": "Spyglass",
+        "materiaux": ["Copper Ingot", "Copper Ingot", "Amethyst Shard"]
+    },
+    {
+        "id": 147,
+        "nom": "Tinted Glass",
+        "materiaux": ["Glass", "Glass", "Glass", "Glass", "Amethyst Shard", "Glass", "Glass", "Glass", "Glass"]
+    },
+    {
+        "id": 148,
+        "nom": "Amethyst Block",
+        "materiaux": ["Amethyst Shard", "Amethyst Shard", "Amethyst Shard", "Amethyst Shard", "Amethyst Shard", "Amethyst Shard", "Amethyst Shard", "Amethyst Shard", "Amethyst Shard"]
+    },
+    {
+        "id": 149,
+        "nom": "Candle",
+        "materiaux": ["Honeycomb", "String"]
+    },
+    {
+        "id": 150,
+        "nom": "Bundle",
+        "materiaux": ["Rabbit Hide", "Rabbit Hide", "Rabbit Hide", "String", "String", "Rabbit Hide", "String", "Rabbit Hide", "String"]
+    },
+    {
+        "id": 151,
+        "nom": "Dripstone Block",
+        "materiaux": ["Pointed Dripstone", "Pointed Dripstone", "Pointed Dripstone", "Pointed Dripstone"]
+    },
+    {
+        "id": 152,
+        "nom": "Moss Block",
+        "materiaux": ["Moss Carpet", "Moss Carpet"]
+    },
+    {
+        "id": 153,
+        "nom": "Rooted Dirt",
+        "materiaux": ["Hanging Roots", "Dirt"]
+    },
+    {
+        "id": 154,
+        "nom": "Mud Bricks",
+        "materiaux": ["Packed Mud", "Packed Mud", "Packed Mud", "Packed Mud"]
+    },
+    {
+        "id": 155,
+        "nom": "Mud Brick Stairs",
+        "materiaux": ["Mud Bricks", "Mud Bricks", "Mud Bricks", "Mud Bricks", "Mud Bricks", "Mud Bricks"]
+    },
+    {
+        "id": 156,
+        "nom": "Mud Brick Slab",
+        "materiaux": ["Mud Bricks", "Mud Bricks", "Mud Bricks"]
+    },
+    {
+        "id": 157,
+        "nom": "Mud Brick Wall",
+        "materiaux": ["Mud Bricks", "Mud Bricks", "Mud Bricks", "Mud Bricks", "Mud Bricks", "Mud Bricks"]
+    },
+    {
+        "id": 158,
+        "nom": "Copper Ingot",
+        "materiaux": ["Copper Ore"]
+    },
+    {
+        "id": 159,
+        "nom": "Copper Ore",
+        "materiaux": ["Found in Overworld"]
+    },
+    {
+        "id": 160,
+        "nom": "Amethyst Shard",
+        "materiaux": ["Found in Geodes"]
+    },
+    {
+        "id": 161,
+        "nom": "Pointed Dripstone",
+        "materiaux": ["Found in Dripstone Caves"]
+    },
+    {
+        "id": 162,
+        "nom": "Moss Carpet",
+        "materiaux": ["Moss Block"]
+    },
+    {
+        "id": 163,
+        "nom": "Hanging Roots",
+        "materiaux": ["Found in Lush Caves"]
+    },
+    {
+        "id": 164,
+        "nom": "Packed Mud",
+        "materiaux": ["Mud", "Wheat"]
+    },
+    {
+        "id": 165,
+        "nom": "Mud",
+        "materiaux": ["Dirt", "Water Bottle"]
+    },
+    {
+        "id": 166,
+        "nom": "Honeycomb",
+        "materiaux": ["Beehive"]
     }
 ]
