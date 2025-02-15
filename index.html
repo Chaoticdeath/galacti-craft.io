@@ -1,285 +1,728 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Galacti-craft</title>
-    <link rel="icon" href="favicon.png" type="image/png">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1E0F4D;
-            color: #FFFFFF;
-            margin: 0;
-            padding: 50px 0; /* Add padding to create margin between container and top of the page */
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            height: 100vh;
-            overflow: auto;
-        }
-        .container {
-            max-width: 800px;
-            width: 100%;
-            padding: 20px;
-            background-color: #131322;
-            border-radius: 10px;
-            overflow-y: auto;
-        }
-        .search-bar {
-            display: flex;
-            margin-bottom: 20px;
-        }
-        .search-bar input {
-            flex: 1;
-            padding: 10px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px 0 0 5px;
-            outline: none;
-            background-color: #FFFFFF;
-            color: #1E0F4D;
-        }
-        .search-bar button {
-            padding: 10px;
-            font-size: 16px;
-            border: none;
-            border-radius: 0 5px 5px 0;
-            cursor: pointer;
-            background-color: #000000;
-            color: #FFFFFF;
-        }
-        .suggestions {
-            margin-top: 10px;
-            background-color: #131322;
-            border-radius: 5px;
-            overflow: hidden;
-        }
-        .suggestion-item {
-            padding: 5px 10px;
-            cursor: pointer;
-            color: #FFFFFF;
-        }
-        .suggestion-item:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
-        .results {
-            margin-top: 20px;
-            max-height: 600px;
-            overflow-y: auto;
-        }
-        .result-item {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 0px solid #ccc;
-            background-color: #131322;
-            border-radius: 5px;
-            margin-bottom: 10px;
-            color: #FFFFFF;
-        }
-        .result-item .toggle-switch {
-            margin-left: auto;
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 20px;
-        }
-        .toggle-switch input {
-            display: none;
-        }
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 20px;
-        }
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 14px;
-            width: 14px;
-            left: 3px;
-            bottom: 3px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
-        }
-        input:checked + .slider {
-            background-color: #000000;
-        }
-        input:checked + .slider:before {
-            transform: translateX(20px);
-        }
-        .button-container {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        .button-container button {
-            padding: 10px;
-            background-color: #000000;
-            color: #FFFFFF;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="search-bar">
-            <input type="text" id="searchInput" placeholder="Rechercher un matériel..." onkeyup="showSuggestions()">
-            <button onclick="rechercherMateriaux()">Rechercher</button>
-        </div>
-        <div class="suggestions" id="suggestions"></div>
-        <div class="results" id="results"></div>
-        <div class="button-container">
-            <button id="toggleSelectionButton" onclick="toggleSelection()">Afficher la sélection</button>
-            <button id="toggleIngredientsButton" onclick="toggleIngredients()">Voir les ingrédients</button>
-        </div>
-        <div id="selection" style="margin-top: 20px; display: none;"></div>
-        <div id="ingredients" style="margin-top: 20px; display: none;"></div>
-    </div>
-
-    <script>
-        let materiauxCache = [];
-        let selectedItems = [];
-        let selectionVisible = false;
-        let ingredientsVisible = false;
-
-        async function fetchMateriaux() {
-            const response = await fetch('materiaux.json');
-            const materiaux = await response.json();
-            localStorage.setItem('materiaux', JSON.stringify(materiaux));
-            return materiaux;
-        }
-
-        async function getMateriaux() {
-            const cachedMateriaux = localStorage.getItem('materiaux');
-            if (cachedMateriaux) {
-                materiauxCache = JSON.parse(cachedMateriaux);
-                return materiauxCache;
-            }
-            return await fetchMateriaux();
-        }
-
-        async function rechercherMateriaux() {
-            const materiaux = await getMateriaux();
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const results = document.getElementById('results');
-            results.innerHTML = '';
-
-            const filteredMateriaux = materiaux.filter(materiel => materiel.nom.toLowerCase().includes(query));
-            filteredMateriaux.forEach((materiel) => {
-                const div = document.createElement('div');
-                div.classList.add('result-item');
-                const isChecked = selectedItems.includes(materiel.nom) ? 'checked' : '';
-                div.innerHTML = `<label for="item-${materiel.id}"><strong>${materiel.id}. ${materiel.nom}</strong><br>Matériaux: ${materiel.materiaux.join(', ')}</label><div class="toggle-switch"><input type="checkbox" id="item-${materiel.id}" value="${materiel.nom}" ${isChecked} onclick="updateSelection()"><span class="slider"></span></div>`;
-                results.appendChild(div);
-            });
-        }
-
-        async function showSuggestions() {
-            const materiaux = await getMateriaux();
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const suggestions = document.getElementById('suggestions');
-            suggestions.innerHTML = '';
-
-            if (query.length === 0) {
-                return;
-            }
-
-            const filteredMateriaux = materiaux.filter(materiel => materiel.nom.toLowerCase().includes(query));
-            filteredMateriaux.slice(0, 5).forEach((materiel) => {
-                const div = document.createElement('div');
-                div.classList.add('suggestion-item');
-                div.innerHTML = materiel.nom;
-                div.onclick = () => {
-                    document.getElementById('searchInput').value = materiel.nom;
-                    rechercherMateriaux();
-                    suggestions.innerHTML = '';
-                };
-                suggestions.appendChild(div);
-            });
-        }
-
-        function updateSelection() {
-            const checkboxes = document.querySelectorAll('.result-item input');
-            checkboxes.forEach(checkbox => {
-                if (checkbox.checked && !selectedItems.includes(checkbox.value)) {
-                    selectedItems.push(checkbox.value);
-                } else if (!checkbox.checked && selectedItems.includes(checkbox.value)) {
-                    selectedItems = selectedItems.filter(item => item !== checkbox.value);
-                }
-            });
-            afficherSelection();
-            if (ingredientsVisible) {
-                voirIngredients();
-            }
-        }
-
-        function afficherSelection() {
-            const selection = document.getElementById('selection');
-            selection.innerHTML = '<h3>Éléments sélectionnés :</h3>';
-            selectedItems.forEach((item) => {
-                const div = document.createElement('div');
-                div.textContent = item;
-                selection.appendChild(div);
-            });
-        }
-
-        function toggleSelection() {
-            const selection = document.getElementById('selection');
-            selectionVisible = !selectionVisible;
-            if (selectionVisible) {
-                afficherSelection();
-            }
-            selection.style.display = selectionVisible ? 'block' : 'none';
-            document.getElementById('toggleSelectionButton').textContent = selectionVisible ? 'Cacher la sélection' : 'Afficher la sélection';
-        }
-
-        function voirIngredients() {
-            const ingredients = {};
-            const materiaux = materiauxCache;
-            selectedItems.forEach((itemName) => {
-                const item = materiaux.find(materiel => materiel.nom === itemName);
-                if (item) {
-                    item.materiaux.forEach((ingredient) => {
-                        if (ingredients[ingredient]) {
-                            ingredients[ingredient]++;
-                        } else {
-                            ingredients[ingredient] = 1;
-                        }
-                    });
-                }
-            });
-
-            const ingredientsDiv = document.getElementById('ingredients');
-            ingredientsDiv.innerHTML = '<h3>Ingrédients nécessaires :</h3>';
-            Object.keys(ingredients).forEach((ingredient) => {
-                const div = document.createElement('div');
-                div.textContent = `${ingredient}: ${ingredients[ingredient]}`;
-                ingredientsDiv.appendChild(div);
-            });
-        }
-
-        function toggleIngredients() {
-            const ingredients = document.getElementById('ingredients');
-            ingredientsVisible = !ingredientsVisible;
-            if (ingredientsVisible) {
-                voirIngredients();
-            }
-            ingredients.style.display = ingredientsVisible ? 'block' : 'none';
-            document.getElementById('toggleIngredientsButton').textContent = ingredientsVisible ? 'Cacher les ingrédients' : 'Voir les ingrédients';
-        }
-
-        fetchMateriaux();
-    </script>
-</body>
-</html>
+[
+    {
+        "id": 1,
+        "nom": "NASA Workbench",
+        "materiaux": ["Crafting Table", "Compressed Steel", "Levier", "Redstone Torch", "Advanced Wafer"]
+    },
+    {
+        "id": 2,
+        "nom": "Rocket Launch Pad",
+        "materiaux": ["Iron Block", "Compressed Iron"]
+    },
+    {
+        "id": 3,
+        "nom": "Tier 1 Rocket",
+        "materiaux": ["Nose Cone", "Rocket Fins", "Rocket Engine", "Heavy-Duty Plate", "Chest (optional for storage)"]
+    },
+    {
+        "id": 4,
+        "nom": "Oxygen Collector",
+        "materiaux": ["Compressed Steel", "Compressed Aluminum", "Oxygen Vent", "Oxygen Fan", "Oxygen Concentrator"]
+    },
+    {
+        "id": 5,
+        "nom": "Oxygen Compressor",
+        "materiaux": ["Compressed Steel", "Compressed Aluminum", "Oxygen Vent", "Oxygen Concentrator", "Basic Wafer"]
+    },
+    {
+        "id": 6,
+        "nom": "Oxygen Sealer",
+        "materiaux": ["Compressed Steel", "Compressed Aluminum", "Oxygen Vent", "Oxygen Fan", "Basic Wafer"]
+    },
+    {
+        "id": 7,
+        "nom": "Oxygen Bubble Distributor",
+        "materiaux": ["Compressed Steel", "Compressed Aluminum", "Oxygen Vent", "Oxygen Fan", "Basic Wafer"]
+    },
+    {
+        "id": 8,
+        "nom": "Oxygen Gear",
+        "materiaux": ["Oxygen Pipe", "Oxygen Concentrator"]
+    },
+    {
+        "id": 9,
+        "nom": "Oxygen Mask",
+        "materiaux": ["Glass Pane", "Iron Helmet"]
+    },
+    {
+        "id": 10,
+        "nom": "Oxygen Tank (Light, Medium, Heavy)",
+        "materiaux": ["Red Wool", "Tin Canister", "Oxygen Concentrator"]
+    },
+    {
+        "id": 11,
+        "nom": "Aluminum Wire",
+        "materiaux": ["Wool", "Aluminum Ingot"]
+    },
+    {
+        "id": 12,
+        "nom": "Coal Generator",
+        "materiaux": ["Furnace", "Copper Ingot", "Iron Ingot", "Aluminum Wire"]
+    },
+    {
+        "id": 13,
+        "nom": "Basic Solar Panel",
+        "materiaux": ["Compressed Steel", "Compressed Silicon", "Aluminum Wire", "Basic Wafer", "Glass Pane"]
+    },
+    {
+        "id": 14,
+        "nom": "Advanced Solar Panel",
+        "materiaux": ["Compressed Steel", "Compressed Silicon", "Aluminum Wire", "Advanced Wafer", "Glass Pane"]
+    },
+    {
+        "id": 15,
+        "nom": "Circuit Fabricator",
+        "materiaux": ["Furnace", "Button", "Aluminum Ingot", "Lever", "Redstone Torch"]
+    },
+    {
+        "id": 16,
+        "nom": "Compressor",
+        "materiaux": ["Anvil", "Copper Ingot", "Aluminum Ingot", "Basic Wafer"]
+    },
+    {
+        "id": 17,
+        "nom": "Electric Compressor",
+        "materiaux": ["Anvil", "Compressed Steel", "Advanced Wafer", "Aluminum Wire"]
+    },
+    {
+        "id": 18,
+        "nom": "Refinery",
+        "materiaux": ["Furnace", "Copper Canister", "Stone", "Compressed Steel"]
+    },
+    {
+        "id": 19,
+        "nom": "Fuel Loader",
+        "materiaux": ["Compressed Steel", "Copper Ingot", "Tin Canister", "Basic Wafer"]
+    },
+    {
+        "id": 20,
+        "nom": "Buggy",
+        "materiaux": ["Buggy Seat", "Buggy Storage Box", "Wheel", "Heavy-Duty Plate"]
+    },
+    {
+        "id": 21,
+        "nom": "Buggy Seat",
+        "materiaux": ["Leather", "Aluminum Wire"]
+    },
+    {
+        "id": 22,
+        "nom": "Buggy Storage Box",
+        "materiaux": ["Chest", "Aluminum Wire"]
+    },
+    {
+        "id": 23,
+        "nom": "Buggy Wheel",
+        "materiaux": ["Rubber", "Aluminum Wire"]
+    },
+    {
+        "id": 24,
+        "nom": "Parachute",
+        "materiaux": ["Canvas", "String"]
+    },
+    {
+        "id": 25,
+        "nom": "Red Parachute",
+        "materiaux": ["Canvas", "String"]
+    },
+    {
+        "id": 26,
+        "nom": "Blue Parachute",
+        "materiaux": ["Canvas", "String"]
+    },
+    {
+        "id": 27,
+        "nom": "Green Parachute",
+        "materiaux": ["Canvas", "String"]
+    },
+    {
+        "id": 28,
+        "nom": "Canvas",
+        "materiaux": ["String", "Wool"]
+    },
+    {
+        "id": 29,
+        "nom": "Oxygen Pipe",
+        "materiaux": ["Glass"]
+    },
+    {
+        "id": 30,
+        "nom": "Sealable Oxygen Pipe",
+        "materiaux": ["Glass", "Aluminum Wire"]
+    },
+    {
+        "id": 31,
+        "nom": "Oxygen Detector",
+        "materiaux": ["Compressed Steel", "Oxygen Vent"]
+    },
+    {
+        "id": 32,
+        "nom": "Sensor Glasses",
+        "materiaux": ["Glass", "Advanced Wafer"]
+    },
+    {
+        "id": 33,
+        "nom": "Crude Oil",
+        "materiaux": ["Found in Overworld"]
+    },
+    {
+        "id": 34,
+        "nom": "Refined Fuel",
+        "materiaux": ["Refinery Processing Crude Oil"]
+    },
+    {
+        "id": 35,
+        "nom": "Oxygen Canister",
+        "materiaux": ["Oxygen Collector Filling Canister"]
+    },
+    {
+        "id": 36,
+        "nom": "Empty Canister",
+        "materiaux": ["Tin Ingot"]
+    },
+    {
+        "id": 37,
+        "nom": "Battery (Charged)",
+        "materiaux": ["Coal Generator", "Aluminum Wire"]
+    },
+    {
+        "id": 38,
+        "nom": "Battery (Discharged)",
+        "materiaux": ["Battery Used"]
+    },
+    {
+        "id": 39,
+        "nom": "Moon Turf",
+        "materiaux": ["Surface Block Found on the Moon"]
+    },
+    {
+        "id": 40,
+        "nom": "Moon Rock",
+        "materiaux": ["Moon Stone"]
+    },
+    {
+        "id": 41,
+        "nom": "Moon Dungeon Brick",
+        "materiaux": ["Moon Dungeon Structure"]
+    },
+    {
+        "id": 42,
+        "nom": "Air Lock Frame",
+        "materiaux": ["Compressed Steel", "Aluminum Wire"]
+    },
+    {
+        "id": 43,
+        "nom": "Air Lock Controller",
+        "materiaux": ["Compressed Steel", "Basic Wafer", "Redstone Torch"]
+    },
+    {
+        "id": 44,
+        "nom": "Landing Pad",
+        "materiaux": ["Compressed Iron", "Iron Block"]
+    },
+    {
+        "id": 45,
+        "nom": "Space Station Module",
+        "materiaux": ["Compressed Steel", "Aluminum Wire", "Heavy-Duty Plate"]
+    },
+    {
+        "id": 46,
+        "nom": "Cargo Loader",
+        "materiaux": ["Compressed Steel", "Aluminum Wire", "Chest"]
+    },
+    {
+        "id": 47,
+        "nom": "Cargo Unloader",
+        "materiaux": ["Compressed Steel", "Aluminum Wire", "Hopper"]
+    },
+    {
+        "id": 48,
+        "nom": "Oxygen Storage Module",
+        "materiaux": ["Compressed Steel", "Aluminum Wire", "Oxygen Tank"]
+    },
+    {
+        "id": 49,
+        "nom": "Aluminum Ore",
+        "materiaux": ["Natural Ore Found in Overworld"]
+    },
+    {
+        "id": 50,
+        "nom": "Copper Ore",
+        "materiaux": ["Natural Ore Found in Overworld"]
+    },
+    {
+        "id": 51,
+        "nom": "Tin Ore",
+        "materiaux": ["Natural Ore Found in Overworld"]
+    },
+    {
+        "id": 52,
+        "nom": "Silicon Ore",
+        "materiaux": ["Natural Ore Found in Overworld"]
+    },
+    {
+        "id": 53,
+        "nom": "Meteoric Iron Ore",
+        "materiaux": ["Falling Meteors on the Moon"]
+    },
+    {
+        "id": 54,
+        "nom": "Raw Silicon",
+        "materiaux": ["Silicon Ore"]
+    },
+    {
+        "id": 55,
+        "nom": "Compressed Steel",
+        "materiaux": ["Iron Ingot", "Coal"]
+    },
+    {
+        "id": 56,
+        "nom": "Compressed Aluminum",
+        "materiaux": ["Aluminum Ingot"]
+    },
+    {
+        "id": 57,
+        "nom": "Compressed Tin",
+        "materiaux": ["Tin Ingot"]
+    },
+    {
+        "id": 58,
+        "nom": "Compressed Copper",
+        "materiaux": ["Copper Ingot"]
+    },
+    {
+        "id": 59,
+        "nom": "Compressed Meteoric Iron",
+        "materiaux": ["Meteoric Iron"]
+    },
+    {
+        "id": 60,
+        "nom": "Heavy-Duty Plate",
+        "materiaux": ["Compressed Steel", "Compressed Aluminum", "Compressed Bronze"]
+    },
+    {
+        "id": 61,
+        "nom": "Boat",
+        "materiaux": ["Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks"]
+    },
+    {
+        "id": 62,
+        "nom": "Chest",
+        "materiaux": ["Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks"]
+    },
+    {
+        "id": 63,
+        "nom": "Furnace",
+        "materiaux": ["Cobblestone", "Cobblestone", "Cobblestone", "Cobblestone", "Cobblestone", "Cobblestone", "Cobblestone", "Cobblestone"]
+    },
+    {
+        "id": 64,
+        "nom": "Crafting Table",
+        "materiaux": ["Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks"]
+    },
+    {
+        "id": 65,
+        "nom": "Wooden Pickaxe",
+        "materiaux": ["Wooden Planks", "Wooden Planks", "Wooden Planks", "Stick", "Stick"]
+    },
+    {
+        "id": 66,
+        "nom": "Stone Pickaxe",
+        "materiaux": ["Cobblestone", "Cobblestone", "Cobblestone", "Stick", "Stick"]
+    },
+    {
+        "id": 67,
+        "nom": "Iron Pickaxe",
+        "materiaux": ["Iron Ingot", "Iron Ingot", "Iron Ingot", "Stick", "Stick"]
+    },
+    {
+        "id": 68,
+        "nom": "Diamond Pickaxe",
+        "materiaux": ["Diamond", "Diamond", "Diamond", "Stick", "Stick"]
+    },
+    {
+        "id": 69,
+        "nom": "Wooden Sword",
+        "materiaux": ["Wooden Planks", "Wooden Planks", "Stick"]
+    },
+    {
+        "id": 70,
+        "nom": "Stone Sword",
+        "materiaux": ["Cobblestone", "Cobblestone", "Stick"]
+    },
+    {
+        "id": 71,
+        "nom": "Iron Sword",
+        "materiaux": ["Iron Ingot", "Iron Ingot", "Stick"]
+    },
+    {
+        "id": 72,
+        "nom": "Diamond Sword",
+        "materiaux": ["Diamond", "Diamond", "Stick"]
+    },
+    {
+        "id": 73,
+        "nom": "Wooden Shovel",
+        "materiaux": ["Wooden Planks", "Stick"]
+    },
+    {
+        "id": 74,
+        "nom": "Stone Shovel",
+        "materiaux": ["Cobblestone", "Stick"]
+    },
+    {
+        "id": 75,
+        "nom": "Iron Shovel",
+        "materiaux": ["Iron Ingot", "Stick"]
+    },
+    {
+        "id": 76,
+        "nom": "Diamond Shovel",
+        "materiaux": ["Diamond", "Stick"]
+    },
+    {
+        "id": 77,
+        "nom": "Wooden Axe",
+        "materiaux": ["Wooden Planks", "Wooden Planks", "Stick"]
+    },
+    {
+        "id": 78,
+        "nom": "Stone Axe",
+        "materiaux": ["Cobblestone", "Cobblestone", "Stick"]
+    },
+    {
+        "id": 79,
+        "nom": "Iron Axe",
+        "materiaux": ["Iron Ingot", "Iron Ingot", "Stick"]
+    },
+    {
+        "id": 80,
+        "nom": "Diamond Axe",
+        "materiaux": ["Diamond", "Diamond", "Stick"]
+    },
+    {
+        "id": 81,
+        "nom": "Stick",
+        "materiaux": ["Wooden Planks", "Wooden Planks"]
+    },
+    {
+        "id": 82,
+        "nom": "Torch",
+        "materiaux": ["Coal", "Stick"]
+    },
+    {
+        "id": 83,
+        "nom": "Bed",
+        "materiaux": ["Wooden Planks", "Wooden Planks", "Wooden Planks", "Wool", "Wool", "Wool"]
+    },
+    {
+        "id": 84,
+        "nom": "Painting",
+        "materiaux": ["Stick", "Stick", "Stick", "Stick", "Wool"]
+    },
+    {
+        "id": 85,
+        "nom": "Sign",
+        "materiaux": ["Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks"]
+    },
+    {
+        "id": 86,
+        "nom": "Ladder",
+        "materiaux": ["Stick", "Stick", "Stick", "Stick", "Stick", "Stick", "Stick"]
+    },
+    {
+        "id": 87,
+        "nom": "Wooden Door",
+        "materiaux": ["Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks"]
+    },
+    {
+        "id": 88,
+        "nom": "Iron Door",
+        "materiaux": ["Iron Ingot", "Iron Ingot", "Iron Ingot", "Iron Ingot", "Iron Ingot", "Iron Ingot"]
+    },
+    {
+        "id": 89,
+        "nom": "Bucket",
+        "materiaux": ["Iron Ingot", "Iron Ingot", "Iron Ingot"]
+    },
+    {
+        "id": 91,
+        "nom": "Rail",
+        "materiaux": ["Iron Ingot", "Stick", "Iron Ingot", "Stick", "Iron Ingot"]
+    },
+    {
+        "id": 92,
+        "nom": "Powered Rail",
+        "materiaux": ["Gold Ingot", "Stick", "Redstone", "Gold Ingot", "Stick", "Gold Ingot"]
+    },
+    {
+        "id": 93,
+        "nom": "Detector Rail",
+        "materiaux": ["Iron Ingot", "Stone Pressure Plate", "Redstone", "Iron Ingot", "Stone Pressure Plate", "Iron Ingot"]
+    },
+    {
+        "id": 94,
+        "nom": "Cobblestone Stairs",
+        "materiaux": ["Cobblestone", "Cobblestone", "Cobblestone", "Cobblestone", "Cobblestone", "Cobblestone"]
+    },
+    {
+        "id": 95,
+        "nom": "Wooden Stairs",
+        "materiaux": ["Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks"]
+    },
+    {
+        "id": 96,
+        "nom": "Stone Slab",
+        "materiaux": ["Stone", "Stone", "Stone"]
+    },
+    {
+        "id": 97,
+        "nom": "Wooden Slab",
+        "materiaux": ["Wooden Planks", "Wooden Planks", "Wooden Planks"]
+    },
+    {
+        "id": 98,
+        "nom": "Cobblestone Wall",
+        "materiaux": ["Cobblestone", "Cobblestone", "Cobblestone", "Cobblestone", "Cobblestone", "Cobblestone"]
+    },
+    {
+        "id": 99,
+        "nom": "Fence",
+        "materiaux": ["Stick", "Stick", "Stick", "Stick", "Stick", "Stick"]
+    },
+    {
+        "id": 100,
+        "nom": "Fence Gate",
+        "materiaux": ["Stick", "Stick", "Wooden Planks", "Stick", "Stick", "Wooden Planks"]
+    },
+    {
+        "id": 101,
+        "nom": "Iron Bars",
+        "materiaux": ["Iron Ingot", "Iron Ingot", "Iron Ingot", "Iron Ingot", "Iron Ingot", "Iron Ingot"]
+    },
+    {
+        "id": 102,
+        "nom": "Glass Pane",
+        "materiaux": ["Glass", "Glass", "Glass", "Glass", "Glass", "Glass"]
+    },
+    {
+        "id": 103,
+        "nom": "Redstone Lamp",
+        "materiaux": ["Glowstone", "Redstone", "Redstone", "Redstone", "Redstone"]
+    },
+    {
+        "id": 104,
+        "nom": "Note Block",
+        "materiaux": ["Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks", "Redstone"]
+    },
+    {
+        "id": 105,
+        "nom": "Jukebox",
+        "materiaux": ["Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks", "Diamond"]
+    },
+    {
+        "id": 106,
+        "nom": "TNT",
+        "materiaux": ["Gunpowder", "Sand", "Gunpowder", "Sand", "Gunpowder", "Sand"]
+    },
+    {
+        "id": 107,
+        "nom": "Bookshelf",
+        "materiaux": ["Wooden Planks", "Wooden Planks", "Wooden Planks", "Book", "Book", "Book"]
+    },
+    {
+        "id": 108,
+        "nom": "Enchantment Table",
+        "materiaux": ["Book", "Diamond", "Obsidian", "Obsidian", "Obsidian", "Obsidian"]
+    },
+    {
+        "id": 109,
+        "nom": "Anvil",
+        "materiaux": ["Iron Ingot", "Iron Ingot", "Iron Ingot", "Iron Block", "Iron Block", "Iron Block"]
+    },
+    {
+        "id": 110,
+        "nom": "Ender Chest",
+        "materiaux": ["Obsidian", "Obsidian", "Obsidian", "Obsidian", "Obsidian", "Obsidian", "Eye of Ender"]
+    },
+    {
+        "id": 111,
+        "nom": "Beacon",
+        "materiaux": ["Glass", "Glass", "Glass", "Obsidian", "Obsidian", "Obsidian", "Nether Star"]
+    },
+    {
+        "id": 112,
+        "nom": "Cauldron",
+        "materiaux": ["Iron Ingot", "Iron Ingot", "Iron Ingot", "Iron Ingot", "Iron Ingot", "Iron Ingot", "Iron Ingot"]
+    },
+    {
+        "id": 113,
+        "nom": "Brewing Stand",
+        "materiaux": ["Blaze Rod", "Cobblestone", "Cobblestone", "Cobblestone"]
+    },
+    {
+        "id": 114,
+        "nom": "Cake",
+        "materiaux": ["Milk Bucket", "Milk Bucket", "Milk Bucket", "Sugar", "Egg", "Wheat", "Wheat", "Wheat"]
+    },
+    {
+        "id": 115,
+        "nom": "Piston",
+        "materiaux": ["Wooden Planks", "Wooden Planks", "Wooden Planks", "Cobblestone", "Iron Ingot", "Redstone"]
+    },
+    {
+        "id": 116,
+        "nom": "Sticky Piston",
+        "materiaux": ["Piston", "Slimeball"]
+    },
+    {
+        "id": 117,
+        "nom": "Trapdoor",
+        "materiaux": ["Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks", "Wooden Planks"]
+    },
+    {
+        "id": 118,
+        "nom": "Iron Trapdoor",
+        "materiaux": ["Iron Ingot", "Iron Ingot", "Iron Ingot", "Iron Ingot", "Iron Ingot", "Iron Ingot"]
+    },
+    {
+        "id": 119,
+        "nom": "Daylight Sensor",
+        "materiaux": ["Glass", "Glass", "Glass", "Nether Quartz", "Nether Quartz", "Nether Quartz", "Wooden Slab"]
+    },
+    {
+        "id": 120,
+        "nom": "Redstone Repeater",
+        "materiaux": ["Stone", "Stone", "Stone", "Redstone Torch", "Redstone", "Redstone"]
+    },
+    {
+        "id": 121,
+        "nom": "Redstone Comparator",
+        "materiaux": ["Stone", "Stone", "Stone", "Redstone Torch", "Redstone Torch", "Nether Quartz"]
+    },
+    {
+        "id": 122,
+        "nom": "Hopper",
+        "materiaux": ["Iron Ingot", "Iron Ingot", "Iron Ingot", "Chest", "Iron Ingot", "Iron Ingot"]
+    },
+    {
+        "id": 123,
+        "nom": "Dropper",
+        "materiaux": ["Cobblestone", "Cobblestone", "Cobblestone", "Cobblestone", "Redstone", "Cobblestone"]
+    },
+    {
+        "id": 124,
+        "nom": "Dispenser",
+        "materiaux": ["Cobblestone", "Cobblestone", "Cobblestone", "Cobblestone", "Bow", "Redstone"]
+    },
+    {
+        "id": 125,
+        "nom": "Observer",
+        "materiaux": ["Cobblestone", "Cobblestone", "Cobblestone", "Redstone", "Redstone", "Quartz"]
+    },
+    {
+        "id": 126,
+        "nom": "Tripwire Hook",
+        "materiaux": ["Iron Ingot", "Stick", "Wooden Planks"]
+    },
+    {
+        "id": 127,
+        "nom": "Redstone Block",
+        "materiaux": ["Redstone", "Redstone", "Redstone", "Redstone", "Redstone", "Redstone", "Redstone", "Redstone", "Redstone"]
+    },
+    {
+        "id": 128,
+        "nom": "Quartz Block",
+        "materiaux": ["Nether Quartz", "Nether Quartz", "Nether Quartz", "Nether Quartz", "Nether Quartz", "Nether Quartz", "Nether Quartz", "Nether Quartz", "Nether Quartz"]
+    },
+    {
+        "id": 129,
+        "nom": "Quartz Stairs",
+        "materiaux": ["Quartz Block", "Quartz Block", "Quartz Block", "Quartz Block", "Quartz Block", "Quartz Block"]
+    },
+    {
+        "id": 130,
+        "nom": "Quartz Slab",
+        "materiaux": ["Quartz Block", "Quartz Block", "Quartz Block"]
+    },
+    {
+        "id": 131,
+        "nom": "Chiseled Quartz Block",
+        "materiaux": ["Quartz Slab", "Quartz Slab"]
+    },
+    {
+        "id": 132,
+        "nom": "Pillar Quartz Block",
+        "materiaux": ["Quartz Block", "Quartz Block"]
+    },
+    {
+        "id": 133,
+        "nom": "Hay Bale",
+        "materiaux": ["Wheat", "Wheat", "Wheat", "Wheat", "Wheat", "Wheat", "Wheat", "Wheat", "Wheat"]
+    },
+    {
+        "id": 134,
+        "nom": "Carpet",
+        "materiaux": ["Wool", "Wool"]
+    },
+    {
+        "id": 135,
+        "nom": "Hardened Clay",
+        "materiaux": ["Clay Block"]
+    },
+    {
+        "id": 136,
+        "nom": "Stained Clay",
+        "materiaux": ["Hardened Clay", "Dye"]
+    },
+    {
+        "id": 137,
+        "nom": "Leash",
+        "materiaux": ["String", "String", "String", "Slimeball"]
+    },
+    {
+        "id": 138,
+        "nom": "Name Tag",
+        "materiaux": ["Iron Ingot", "Paper"]
+    },
+    {
+        "id": 139,
+        "nom": "Item Frame",
+        "materiaux": ["Stick", "Stick", "Stick", "Stick", "Leather"]
+    },
+    {
+        "id": 140,
+        "nom": "Flower Pot",
+        "materiaux": ["Brick", "Brick", "Brick"]
+    },
+    {
+        "id": 141,
+        "nom": "banner",
+        "materiaux": ["wool", "wool", "wool", "wool", "wool", "wool", "stick"]
+    },
+   
+    {
+        "id": 147,
+        "nom": "Tinted Glass",
+        "materiaux": ["Glass", "Glass", "Glass", "Glass", "Amethyst Shard", "Glass", "Glass", "Glass", "Glass"]
+    },
+    {
+        "id": 148,
+        "nom": "Amethyst Block",
+        "materiaux": ["Amethyst Shard", "Amethyst Shard", "Amethyst Shard", "Amethyst Shard", "Amethyst Shard", "Amethyst Shard", "Amethyst Shard", "Amethyst Shard", "Amethyst Shard"]
+    },
+    {
+        "id": 149,
+        "nom": "Candle",
+        "materiaux": ["Honeycomb", "String"]
+    },
+    {
+        "id": 152,
+        "nom": "Moss Block",
+        "materiaux": ["Moss Carpet", "Moss Carpet"]
+    },
+    {
+        "id": 166,
+        "nom": "Honeycomb",
+        "materiaux": ["Beehive"]
+    }
+]
