@@ -180,19 +180,19 @@
             return await fetchMateriaux();
         }
         async function rechercherMateriaux() {
-            const materiaux = await getMateriaux();
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const results = document.getElementById('results');
-            results.innerHTML = '';
-            const filteredMateriaux = materiaux.filter(materiel => materiel.nom.toLowerCase().includes(query));
-            filteredMateriaux.forEach((materiel) => {
-                const div = document.createElement('div');
-                div.classList.add('result-item');
-                const isChecked = selectedItems.includes(materiel.nom) ? 'checked' : '';
-                div.innerHTML = `<label for="item-${materiel.id}"><strong>${materiel.id}. ${materiel.nom}</strong><br>Matériaux: ${materiel.materiaux.join(', ')}</label><div class="toggle-switch"><in[...]
-                results.appendChild(div);
-            });
-        }
+    const materiaux = await getMateriaux();
+    const query = document.getElementById('searchInput').value.toLowerCase();
+    const results = document.getElementById('results');
+    results.innerHTML = '';
+    const filteredMateriaux = materiaux.filter(materiel => materiel.nom.toLowerCase().includes(query));
+    filteredMateriaux.forEach((materiel) => {
+        const div = document.createElement('div');
+        div.classList.add('result-item');
+        const isChecked = selectedItems.includes(materiel.nom) ? 'checked' : '';
+        div.innerHTML = `<label for="item-${materiel.id}"><strong>${materiel.id}. ${materiel.nom}</strong><br>Matériaux: ${materiel.materiaux.join(', ')}</label><div class="toggle-switch"><input type="checkbox" id="item-${materiel.id}" value="${materiel.nom}" ${isChecked} onchange="updateSelection()"><span class="slider"></span></div>`;
+        results.appendChild(div);
+    });
+}
         async function showSuggestions() {
             const materiaux = await getMateriaux();
             const query = document.getElementById('searchInput').value.toLowerCase();
@@ -246,39 +246,39 @@
             selection.style.display = selectionVisible ? 'block' : 'none';
             document.getElementById('toggleSelectionButton').textContent = selectionVisible ? 'Cacher la sélection' : 'Afficher la sélection';
         }
-        function voirIngredients() {
-            const ingredients = {};
-            const materiaux = materiauxCache;
-            selectedItems.forEach((itemName) => {
-                const item = materiaux.find(materiel => materiel.nom === itemName);
-                if (item) {
-                    item.materiaux.forEach((ingredient) => {
-                        if (ingredients[ingredient]) {
-                            ingredients[ingredient]++;
-                        } else {
-                            ingredients[ingredient] = 1;
-                        }
-                    });
-                }
-            });
-            const ingredientsDiv = document.getElementById('ingredients');
-            ingredientsDiv.innerHTML = '<h3>Ingrédients nécessaires :</h3>';
-            Object.keys(ingredients).forEach((ingredient) => {
-                const div = document.createElement('div');
-                div.textContent = `${ingredient}: ${ingredients[ingredient]}`;
-                ingredientsDiv.appendChild(div);
-            });
-        }
-        function toggleIngredients() {
-            const ingredients = document.getElementById('ingredients');
-            ingredientsVisible = !ingredientsVisible;
-            if (ingredientsVisible) {
-                voirIngredients();
+       function voirIngredients() {
+        const ingredients = {};
+        const materiaux = materiauxCache;
+        selectedItems.forEach((itemName) => {
+            const item = materiaux.find(materiel => materiel.nom === itemName);
+            if (item) {
+                item.materiaux.forEach((ingredient) => {
+                    if (ingredients[ingredient]) {
+                        ingredients[ingredient]++;
+                    } else {
+                        ingredients[ingredient] = 1;
+                    }
+                });
             }
-            ingredients.style.display = ingredientsVisible ? 'block' : 'none';
-            document.getElementById('toggleIngredientsButton').textContent = ingredientsVisible ? 'Cacher les ingrédients' : 'Voir les ingrédients';
+        });
+        const ingredientsDiv = document.getElementById('ingredients');
+        ingredientsDiv.innerHTML = '<h3>Ingrédients nécessaires :</h3>';
+        Object.keys(ingredients).forEach((ingredient) => {
+            const div = document.createElement('div');
+            div.textContent = `${ingredient}: ${ingredients[ingredient]}`;
+            ingredientsDiv.appendChild(div);
+        });
+    }
+    function toggleIngredients() {
+        const ingredients = document.getElementById('ingredients');
+        ingredientsVisible = !ingredientsVisible;
+        if (ingredientsVisible) {
+            voirIngredients();
         }
-        fetchMateriaux();
-    </script>
+        ingredients.style.display = ingredientsVisible ? 'block' : 'none';
+        document.getElementById('toggleIngredientsButton').textContent = ingredientsVisible ? 'Cacher les ingrédients' : 'Voir les ingrédients';
+    }
+    fetchMateriaux();
+</script>
 </body>
 </html>
